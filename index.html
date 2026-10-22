@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¡Feliz Cumpleaños, Papá Sabritas! 🎂🏴‍☠️</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Great+Vibes&family=Lora:ital,wght@0,400;0,600;1,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    :root {
+      --bg-dark: #120e0c;
+      --card-bg: #fffbf5;
+      --card-border: #e6dac8;
+      --primary-terra: #a64d2a;
+      --accent-gold: #d4a359;
+      --gold-dark: #916829;
+      --text-main: #332721;
+      --text-muted: #6e5d53;
+      --seal-red: #8b1e1b;
+      --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(212, 163, 89, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(166, 77, 42, 0.15) 0%, transparent 45%);
+      color: var(--text-main);
+      font-family: 'Lora', Georgia, serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 24px 16px 80px 16px;
+      overflow-x: hidden;
+    }
+
+    /* Intro / Envelope Screen */
+    #envelope-screen {
+      min-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      width: 100%;
+      max-width: 500px;
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .intro-title {
+      color: var(--accent-gold);
+      font-family: 'Cinzel', serif;
+      font-size: 1.7rem;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    .intro-subtitle {
+      color: #cfb9a5;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.95rem;
+      margin-bottom: 30px;
+    }
+
+    .envelope-box {
+      width: 320px;
+      height: 220px;
+      background: linear-gradient(135deg, #e3cfb6 0%, #c5ab8d 100%);
+      border-radius: 12px;
+      position: relative;
+      cursor: pointer;
+      box-shadow: var(--shadow-soft), 0 0 40px rgba(212, 163, 89, 0.25);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #b59b7b;
+    }
+
+    .envelope-box:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.5), 0 0 50px rgba(212, 163, 89, 0.4);
+    }
+
+    .envelope-flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 110px;
+      background: linear-gradient(180deg, #d8be9f 0%, #b89c79 100%);
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      transform-origin: top center;
+      transition: transform 0.6s ease;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .wax-seal {
+      position: absolute;
+      top: 85px;
+      width: 82px;
+      height: 82px;
+      background: radial-gradient(circle, #a82320 0%, var(--seal-red) 70%, #59100e 100%);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #f7e6d2;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.45), inset 0 2px 4px rgba(255,255,255,0.3);
+      border: 2px dashed rgba(247, 230, 210, 0.3);
+      z-index: 10;
+      cursor: pointer;
+      animation: pulse 2.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 6px 16px rgba(0,0,0,0.45); }
+      50% { transform: scale(1.06); box-shadow: 0 8px 24px rgba(212, 163, 89, 0.5); }
+    }
+
+    .wax-seal span {
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-align: center;
+      line-height: 1.1;
+    }
+
+    .envelope-instruction {
+      margin-top: 32px;
+      color: #baa48f;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.9rem;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    /* Main Letter Container */
+    #letter-content {
+      display: none;
+      width: 100%;
+      max-width: 840px;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .letter-paper {
+      background-color: var(--card-bg);
+      background-image: 
+        radial-gradient(#ebdcc8 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.6), rgba(253, 246, 235, 0.9));
+      background-size: 20px 20px, 100% 100%;
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+      padding: 56px 48px;
+      box-shadow: var(--shadow-soft), 0 0 60px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    @media (max-width: 640px) {
+      .letter-paper {
+        padding: 36px 20px;
+      }
+    }
+
+    .letter-header {
+      text-align: center;
+      border-bottom: 2px solid #ecd8be;
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .header-badge {
+      display: inline-block;
+      background: rgba(166, 77, 42, 0.1);
+      color: var(--primary-terra);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+      border: 1px solid rgba(166, 77, 42, 0.25);
+    }
+
+    .main-title {
+      font-family: 'Cinzel', serif;
+      font-size: 2.2rem;
+      color: #3b281c;
+      margin-bottom: 6px;
+    }
+
+    .sub-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.5rem;
+      color: var(--primary-terra);
+    }
+
+    /* Spotify Container */
+    .spotify-wrapper {
+      margin: 16px auto 32px auto;
+      max-width: 580px;
+      text-align: center;
+    }
+
+    .spotify-label {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .spotify-container {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #ebd9c5;
+    }
+
+    /* Paragraphs and typography */
+    .letter-body {
+      font-size: 1.08rem;
+      line-height: 1.85;
+      color: #3c3029;
+      text-align: justify;
+    }
+
+    .letter-body p {
+      margin-bottom: 22px;
+      text-indent: 1.8rem;
+    }
+
+    .letter-body p:first-of-type {
+      text-indent: 0;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--primary-terra);
+    }
+
+    .quote-highlight {
+      background: rgba(212, 163, 89, 0.12);
+      border-left: 4px solid var(--accent-gold);
+      padding: 16px 20px;
+      margin: 28px 0;
+      border-radius: 0 10px 10px 0;
+      font-style: italic;
+      color: #4a3628;
+    }
+
+    /* Multiverse Cards Grid */
+    .section-break {
+      text-align: center;
+      margin: 48px 0 32px 0;
+    }
+
+    .section-break h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      color: var(--primary-terra);
+      letter-spacing: 1px;
+      display: inline-block;
+      padding: 0 18px;
+    }
+
+    .section-break p {
+      text-indent: 0 !important;
+      text-align: center !important;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .multiverse-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 28px 0 44px 0;
+    }
+
+    .multi-card {
+      background: #ffffff;
+      border: 1px solid #ebd9c5;
+      border-radius: 12px;
+      padding: 18px 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      transition: transform 0.3s ease, border-color 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .multi-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent-gold);
+      box-shadow: 0 8px 20px rgba(212, 163, 89, 0.18);
+    }
+
+    .card-icon {
+      font-size: 1.8rem;
+    }
+
+    .card-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary-terra);
+    }
+
+    .card-desc {
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: var(--text-muted);
+      text-align: left;
+    }
+
+    /* Story Milestones Section */
+    .timeline-box {
+      background: #faf4ec;
+      border: 1px solid #e5d7c3;
+      border-radius: 12px;
+      padding: 24px 20px;
+      margin: 34px 0;
+    }
+
+    .timeline-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.15rem;
+      color: var(--primary-terra);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .milestone-item {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 16px;
+      align-items: flex-start;
+    }
+
+    .milestone-badge {
+      background: var(--accent-gold);
+      color: #1f150c;
+      font-weight: 800;
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-family: 'Nunito', sans-serif;
+      white-space: nowrap;
+      margin-top: 3px;
+    }
+
+    .milestone-text {
+      font-size: 0.95rem;
+      line-height: 1.55;
+      color: #4a3c34;
+    }
+
+    /* Signature area */
+    .letter-signature {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px dashed #d9c6af;
+      text-align: right;
+    }
+
+    .sig-farewell {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: #615045;
+      margin-bottom: 6px;
+    }
+
+    .sig-name {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.8rem;
+      color: var(--primary-terra);
+      line-height: 1.1;
+    }
+
+    /* Bottom Action Bar */
+    .action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 40px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-terra), #873618);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(166, 77, 42, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(166, 77, 42, 0.55);
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      color: var(--text-main);
+      border: 1px solid #d6c4ae;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-secondary:hover {
+      background: #fbf6ef;
+      border-color: var(--accent-gold);
+      transform: translateY(-2px);
+    }
+
+    /* Floating Heart Animation */
+    .floating-heart {
+      position: fixed;
+      bottom: -40px;
+      font-size: 26px;
+      pointer-events: none;
+      z-index: 999;
+      animation: floatUp 3.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) scale(0.6) rotate(0deg);
+        opacity: 0;
+      }
+      20% { opacity: 0.9; }
+      80% { opacity: 0.9; }
+      100% {
+        transform: translateY(-105vh) scale(1.2) rotate(25deg);
+        opacity: 0;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+      .action-bar, #envelope-screen, .spotify-wrapper {
+        display: none !important;
+      }
+      #letter-content {
+        display: block !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .letter-paper {
+        border: none;
+        box-shadow: none;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Envelope Screen -->
+  <div id="envelope-screen">
+    <h1 class="intro-title">HAY UNA CARTA PARA TI</h1>
+    <p class="intro-subtitle">De alguien muy especial que te aprecia y agradece tu vida</p>
+
+    <div class="envelope-box" onclick="openLetter()">
+      <div class="envelope-flap" id="flap"></div>
+      <div class="wax-seal">
+        <span>PAPÁ</span>
+        <span>SABRITAS</span>
+      </div>
+    </div>
+
+    <div class="envelope-instruction">
+      ✨ Toca el sobre para abrirlo ✨
+    </div>
+  </div>
+
+  <!-- Letter Content Screen -->
+  <main id="letter-content">
+    <article class="letter-paper">
+      
+      <header class="letter-header">
+        <span class="header-badge">Para mi papá de corazón</span>
+        <h1 class="main-title">¡Feliz Cumpleaños!</h1>
+        <h2 class="sub-title">Papá Sabritas</h2>
+      </header>
+
+      <!-- SPOTIFY EMBED (TU PLAYLIST CONECTADA) -->
+      <div class="spotify-wrapper">
+        <div class="spotify-label">🎵 Dale play para leer la carta con música</div>
+        <div class="spotify-container">
+          <iframe 
+            id="spotify-frame"
+            style="border-radius: 12px; display: block;" 
+            src="https://open.spotify.com/embed/playlist/1DJb7UViXmmEijRSjKDgaA?utm_source=generator&theme=0" 
+            width="100%" 
+            height="152" 
+            frameBorder="0" 
+            allowfullscreen="" 
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+            loading="lazy">
+          </iframe>
+        </div>
+      </div>
+
+      <section class="letter-body">
+        <p>Holi, papá Sabritas.</p>
+        
+        <p>Te soy sincera, no sé cómo hacer esto, pero es algo que quiero hacer y decir jajaja. Antes de cualquier cosa, he aprendido que siempre es bueno agradecer, y es por eso que el día de hoy quiero agradecer muchísimo, pero muchísimo, a Dios por tu vida, porque está permitiendo que hoy estés cumpliendo un año más, pero también por haberme dado la fortuna de poder conocerte.</p>
+
+        <p>Le quiero agradecer a la vida por haberme dado la oportunidad de tener dos papás, porque creo que ese es uno de los mejores regalos que uno puede recibir. Y, sobre todo, porque uno de ellos eres tú. En verdad, es un gran honor que me hayas aceptado primero como tu sobrina y ahora como una hija, y que, poco a poco, me hayas permitido formar parte de tu vida.</p>
+
+        <p>También le agradezco al universo por permitirme existir en la misma línea del tiempo que tú y por haber hecho que nuestras líneas coincidieran y se conectaran. Porque, entre tantas personas, tantos lugares, tantos momentos y tantas historias que pudieron haber ocurrido, de alguna manera nuestras vidas terminaron encontrándose.</p>
+
+        <p>Pero, sobre todo, a quien más le quiero agradecer por todo es a ti. Por el simple hecho de permitirme formar parte de tu vida, por haberme hecho un espacio en ella y por haber llegado, sin darme cuenta, a formar parte de la mía. Creo que no siempre nos detenemos a pensar en lo bonito que es coincidir con alguien y que esa coincidencia termine significando tanto.</p>
+
+        <p>Tal vez me voy a poner muy filosófica jajaja, pero creo que es algo necesario, sobre todo porque hoy estamos celebrando a una de las personas que más me han enseñado en la vida y que, en tan poco tiempo, ha logrado enseñarme tantas cosas.</p>
+
+        <div class="quote-highlight">
+          «Recuerdo que una vez me preguntaste si me gustaba el anime y me comentaste que el tipo de anime que más te gusta es el isekai... porque el protagonista puede vivir varias vidas dentro de una misma historia. Y tú has vivido varias vidas en una sola, sin necesidad de cambiar de skin, de realidad o de viajar a un multiverso jajaja.»
+        </div>
+
+        <p>Y creo que, al irte conociendo poco a poco, he entendido por qué te agrada tanto este estilo, porque, de alguna manera, se parece mucho a ti. Tú has vivido varias vidas en una sola, sin necesidad de cambiar de skin, de realidad o de viajar a un multiverso jajaja.</p>
+
+        <p>Así que déjame ayudarte a recordar un poco algunas de esas vidas, fases o etapas que has vivido. Algunas las conozco porque las has platicado, otras porque me las has contado y algunas más porque incluso he tenido la oportunidad de verlas.</p>
+
+        <!-- El Multiverso de Papá Sabritas -->
+        <div class="section-break">
+          <h3>EL MULTIVERSO DE PAPÁ SABRITAS</h3>
+          <p>Tantas vidas, fases y aventuras reunidas en una sola persona</p>
+        </div>
+
+        <div class="multiverse-grid">
+          <div class="multi-card">
+            <span class="card-icon">🍹</span>
+            <div class="card-title">El chico sociable</div>
+            <div class="card-desc">Aquel que se iba de fiesta en fiesta, descubriendo el mundo y disfrutando de las aguas locas.</div>
+          </div>
+          <div class="multi-card">
+            <span class="card-icon">🃏</span>
+            <div class="card-title">El maestro de cartas</div>
+            <div class="card-desc">Bueno para los juegos de cartas y apuestas, sobreviviendo un buen rato sin preocuparse por el dinero.</div>
+          </div>
+          <div class="multi-card">
+            <span class="card-icon">🚗🚤</span>
+            <div class="card-title">Todo un Terreneitor</div>
+            <div class="card-desc">Carros, motos, camiones, tráileres, lanchas y motos acuáticas. ¡A nada de ser maestro de los elementos!</div>
+          </div>
+          <div class="multi-card">
+            <span class="card-icon">📱</span>
+            <div class="card-title">El famoso de TikTok</div>
+            <div class="card-desc">Donde quiera que llegabas alguien te conocía, presente en las mejores funas... ¡Tú sí gobiernas todo!</div>
+          </div>
+          <div class="multi-card">
+            <span class="card-icon">☕🎙️</span>
+            <div class="card-title">Creador & Refugio</div>
+            <div class="card-desc">Creando un espacio seguro en cada live con café irlandés, buena música y batallas donde la familia no existía jajaja.</div>
+          </div>
+          <div class="multi-card">
+            <span class="card-icon">🦇🎧</span>
+            <div class="card-title">Modo Batman / Produ</div>
+            <div class="card-desc">Toda tu creatividad al máximo, echando coto mágico (aunque tu garganta no opinara lo mismo).</div>
+          </div>
+          <div class="multi-card">
+            <span class="card-icon">🐱💼</span>
+            <div class="card-title">El hombre responsable</div>
+            <div class="card-desc">Hijo y hermano ejemplar, peleando con su gatito y liderando con responsabilidad en su trabajo.</div>
+          </div>
+          <div class="multi-card">
+            <span class="card-icon">👨‍👧❤️</span>
+            <div class="card-title">Etapa Familia</div>
+            <div class="card-desc">El proceso único y especial de sobrina a hija que nadie más comparte. ¡Mi angelito de la guarda!</div>
+          </div>
+        </div>
+
+        <p>Una de ellas es la de aquel chico que, de cierto modo, era muy sociable y se iba de fiesta en fiesta, descubriendo y disfrutando de las aguas locas.</p>
+
+        <p>Otra es la etapa en la que descubriste que eras bueno para los juegos de cartas y apuestas, tanto que incluso podías dejar de preocuparte por el dinero durante un tiempo y sobrevivir un rato así.</p>
+
+        <p>¡Cómo olvidar también el hecho de que has aprendido tantas cosas que eres casi por completo todo un terreneitor! Sabes manejar desde vehículos terrestres, como un carro, una moto, un camión o tráileres, hasta vehículos acuáticos, como motos acuáticas y barcos, si no mal recuerdo. Creo que aún no dominas el aire, pero estoy segura de que, si se presentara la oportunidad, la aprovecharías. ¿Ves? ¡Incluso estás a nada de volverte un maestro de los elementos jajaja!</p>
+
+        <p>Después está esa parte en la que te volviste alguien famoso dentro de una plataforma, TikTok, donde, sin importar a dónde llegaras, siempre había al menos una persona que te conocía. Incluso estabas en primera fila en cada una de las funas más controversiales; a veces, incluso, estabas dentro de ellas. En verdad, papá, ¡tú sí gobiernas todo!</p>
+
+        <p>Pero ¿cómo olvidar la etapa de creador de contenido? Esa en la que, en cada live, siempre buscabas que tu espacio se convirtiera en el lugar seguro de cada persona que llegara; un lugar donde las acogías, escuchabas e incluso compartías tu punto de vista. Un lugar donde uno podía sentirse acogido, disfrutar de buena música, de una gran compañía y, de vez en cuando, hasta de un buen café irlandés.</p>
+
+        <p>Aunque, en ocasiones, tus lives también se convertían en territorio de batalla, porque había que ver cómo ciertos equipos o personas lograban triunfar en los juegos y, en esos momentos, ¡la amistad y la familia dejaban de existir jajaja!</p>
+
+        <p>Y tampoco podemos dejar de lado tus videos, esos que creaste para ayudar a reflexionar e incluso a hacer introspección; ese contenido que te mantenía al borde del suspenso con tus historias y esos videos donde siempre podías aprender algo nuevo.</p>
+
+        <p>O la etapa de produ, donde te volviste por completo Batman. Conocer esa etapa tuya me encantó, porque era otra manera de poder echar coto contigo y todo se sentía tan mágico, aunque dudo que tu garganta llegara a pensar lo mismo jajaja. Fue otra forma de ver cómo se desenvuelven tu creatividad y tu forma de ser, y de conocer una faceta más de ti a través de algo que compartíamos de una manera diferente.</p>
+
+        <p>Y, ya casi terminando el recorrido por las etapas de tu vida, que todavía se sigue escribiendo, está la del hombre completamente responsable; ese que sigue siendo hijo y hermano, que tiene a su gatito con el que a veces pelea y que, además, es responsable de varias personas más por medio de su trabajo.</p>
+
+        <p>Y ahora sí, llegamos a la última etapa, una de las que más afortunada y bendecida me siento de poder conocer: la etapa como familia.</p>
+
+        <p>Sé que varios disfrutan de esta etapa desde su lugar como hermanos, sobrinos e incluso hijos, pero, en lo personal, yo he vivido un proceso de sobrina a hija y, como nadie más comparte exactamente esa experiencia, por eso me siento más especial jajaja.</p>
+
+        <p>Sin darte cuenta, me has ayudado bastante desde que te conocí. Nunca me imaginé que podría involucrarte tanto y de una manera tan personal con alguien a quien conocí por medio de una red social. Y creo que eso hace que esta parte de tu historia tenga un significado muy particular para mí, porque no solo he podido conocer algunas de las vidas que has vivido, sino que también he tenido la oportunidad de encontrar un lugar en la tuya.</p>
+
+        <p>Gracias por ser mi angelito, porque, sin darte cuenta, llegaste a convertirte en un pilar muy importante en mi vida y sigues siéndolo actualmente. Más adelante en la carta te diré por qué.</p>
+
+        <p>Y creo que eso es precisamente lo curioso de hablar de todas esas vidas que has vivido: que, aunque cada una parece ser completamente diferente de la anterior, todas forman parte de la misma persona que hoy conozco.</p>
+
+        <p>El chico de las fiestas, el jugador de cartas, el terreneitor, el famoso de TikTok, el creador de contenido, el de los lives, el de las historias y los videos, el de produ, el hombre responsable y el que hoy forma parte de mi familia… todos ellos han sido, de alguna manera, tú, mi papá Sabri.</p>
+
+        <p>¡Y qué bonito ha sido poder conocer, aunque sea una pequeña parte, de todas esas versiones de ti!</p>
+
+        <p>Por eso, hoy que estás cumpliendo un año más, quería aprovechar para agradecerte por tu vida, por haber coincidido conmigo y por permitirme llamarte, de alguna manera, papá.</p>
+
+        <p>Es tan increíble pensar en todo lo que has vivido y, aunque sé que la vida no es fácil, porque una triste realidad es que siempre van a existir retos enormes que a veces parecen imposibles de superar, tú ya has superado gran parte de ellos, y gracias a eso eres la persona que eres.</p>
+
+        <p>Hay muchas cosas que me gustan de tu persona. Entre esas cualidades está que siempre estás dispuesto a aprender algo nuevo o a conocer nuevas perspectivas. Nunca te quedas con lo que conoces, tanto así que hasta disfrutas debatirlo para poder ampliar tu horizonte.</p>
+
+        <p>Otra cualidad que tienes y que admiro demasiado es el hecho de que eres alguien que está dispuesto a enfrentar sus errores, aprender de ellos, reconocerlos e incluso pedir una disculpa en caso de ser necesario.</p>
+
+        <p>También eres un hombre con gran humildad. Aunque tú creas que no, sí lo eres, ya que eres alguien que reconoce que tiene límites como ser humano, pero no por eso te dejas vencer. Sabes que tienes debilidades y no por eso te sientes menos. Además, eres alguien que tiene un corazón dispuesto a ayudar sin pedir nada a cambio.</p>
+
+        <p>Eres una persona digna de admirar y siempre será un honor conocerte. Y no, no lo digo porque crea que eres alguien perfecto, que nunca llega a fallar o que deba cumplir con altas expectativas, sino todo lo contrario. Eres un hombre que me permitió conocer un poco de su lado vulnerable; alguien que siempre me aconseja para evitar caer en errores semejantes; alguien que me recordó que siempre hay que tener los valores bien presentes y mantenerse firme con sus ideales; alguien que me mostró que vale la pena creer y confiar en las personas; alguien que me demostró que querer y amar siempre valdrá la pena, sin importar el final; alguien que me enseñó que nunca hay que aparentar ser alguien que uno no es para agradar a los demás.</p>
+
+        <p>Por esto y muchas razones más, te volviste mi angelito de la guarda.</p>
+
+        <p>Ay, papá, si tan solo pudieras saber cuánto tiempo me he tardado en escribir esta carta y todo lo que he llorado, te podrías dar cuenta de lo mucho que te aprecio y de lo importante que eres para mí.</p>
+
+        <p>También por eso quiero aprovechar este espacio para pedirte una disculpa por no estar tan presente como quisiera, porque incluso siento que me distancié de ti. Pero una parte de esto ha sido porque, como te lo dije una vez, me da pena, me cuesta mucho mantener una conversación y tengo como miedo de aburrirte. Otra parte también me dice que no debo molestarte y así.</p>
+
+        <p>Sin embargo, algo sí quiero decirte: siempre te tengo presente, deseándote lo mejor, rezando para que te vaya bien y no te falte nada, y también para que poco a poco puedan ir sanando todas las heridas que tienes en tu mente, en tu corazón y en tu alma; que puedas sanar todo aquello de lo que me has platicado, lo que has contado y todo aquello que has callado. En verdad, te mereces todo lo mejor de la vida, papá.</p>
+
+        <!-- Recuerdos Compartidos -->
+        <div class="timeline-box">
+          <div class="timeline-title">NUESTRA HISTORIA Y RECUERDOS COMPARTIDOS 🏴‍☠️</div>
+          
+          <div class="milestone-item">
+            <span class="milestone-badge">Oct / Nov</span>
+            <div class="milestone-text">El primer comentario copiado donde te dije «tío» por primera vez sin imaginar todo lo que significaría.</div>
+          </div>
+          
+          <div class="milestone-item">
+            <span class="milestone-badge">Noviembre</span>
+            <div class="milestone-text">Me volviste mod en tus lives; escapar un rato de mis preocupaciones y encontrar un refugio seguro a tu lado.</div>
+          </div>
+
+          <div class="milestone-item">
+            <span class="milestone-badge">Churrumais</span>
+            <div class="milestone-text">Cuando llegó Chetos y me cambié a Churrumais... ¡ver tu emoción tan genuina me hizo profundamente feliz!</div>
+          </div>
+
+          <div class="milestone-item">
+            <span class="milestone-badge">🏴‍☠️</span>
+            <div class="milestone-text">La banderita pirata en el nombre: de apoyar en un live a un lazo de pertenencia imborrable.</div>
+          </div>
+
+          <div class="milestone-item">
+            <span class="milestone-badge">Diciembre</span>
+            <div class="milestone-text">La Galletiza con el «¡Estoy listo!», esperando que dieran las 7, tus cafés irlandeses y formar la Piratiza como tu mano derecha.</div>
+          </div>
+
+          <div class="milestone-item">
+            <span class="milestone-badge">El Abrazo</span>
+            <div class="milestone-text">Tu regreso y escuchar: «Alexa, mi mejor mod, mi mano derecha», levantándome el ánimo cuando más lo necesité con mis tías.</div>
+          </div>
+
+          <div class="milestone-item">
+            <span class="milestone-badge">De Sobrina a Hija</span>
+            <div class="milestone-text">El video que me dedicaste, el deseo cumplido de ser tu hija adoptiva y las locuras como produ y anfitrión.</div>
+          </div>
+
+          <div class="milestone-item">
+            <span class="milestone-badge">En Persona</span>
+            <div class="milestone-text">Ese día inolvidable de poder darte un abrazo real, sentir que todo era verdad y salir a bailar juntos un momento.</div>
+          </div>
+        </div>
+
+        <p>Y ahora llegó el momento de ponerme emotiva y nostálgica jajaja, de recordar un poco cómo inició todo y de contarte mi perspectiva de esta historia que hemos compartido. Cabe aclarar que dejé esta parte casi hasta el último porque me costó mucho trabajo escribirla. Recordar es volver a vivir, y vaya que sí regresé a esos recuerdos, tanto que llegaba a distraerme y se me olvidaba todo cuando llegaba el momento de escribir jajaja.</p>
+
+        <p>Y nuestra historia inició por finales de octubre o principios de noviembre, cuando te conocí por X persona jajaja. Pero, como tal, recuerdo perfectamente que mi primer acercamiento fue porque quería copiarle un comentario a alguien, y fue gracias a eso que te dije «tío» por primera vez jajaja. Nunca me imaginé que ese comentario iba a tomar tanta fuerza en mi vida.</p>
+
+        <p>Después de eso, empezamos a convivir. Tú permitiste que te dijera tío, empecé a ir a tus lives y fue así como, a mediados de noviembre, me volviste tu mod en tu live, todo porque me hiciste parte de tu familia.</p>
+
+        <p>Estar en cada uno de tus lives para mí era escapar un rato de mis pensamientos y preocupaciones. Era increíble y lindo ver cómo muchos llegaban a refugiarse un rato contigo para hacer lo mismo, compartir sus vivencias, sentirse escuchados o incluso escuchar otra perspectiva. Era mágico poder ir formando poco a poco parte de eso.</p>
+
+        <p>Después, ¡cómo olvidar cuando llegó Chetos jajaja! Ahí fue cuando habías mencionado algo de que sería gracioso que llegara alguien con los otros nombres de papás. Gracias a eso, me recordaste buenos momentos de cuando llegaba a estar en los videojuegos y mi nombre era Churrumais, así que fue un «¿por qué no?». En cuanto lo hice y tú lo notaste, fue algo tan lindo porque te emocionaste tanto que me hiciste sentir muy feliz. En verdad, nunca pensé que sería algo que significara tanto como tú me lo llegaste a demostrar.</p>
+
+        <p>Posteriormente, me cambié de nuevo el nombre y ahí fue cuando me coloqué el emoji de la banderita pirata. Nunca me imaginé que esa bandera se iba a volver algo tan significativo como lo es hoy. Al principio me la coloqué para que todos conocieran que te apoyaba y luego fue más por sentido de pertenencia. ¿Quién iba a imaginar que ese emoji, en un futuro, iba a llegar a tener tanto peso?</p>
+
+        <p>Luego, a principios de diciembre, nació el grupo de la Galletiza, donde nos activaban con un «¡Estoy listo!». Te juro que disfrutaba demasiado eso. No te imaginas cómo esperaba que llegaran a dar las 7 para poder formar parte de ese cotorreo jajaja. ¿Quién iba a pensar que esa sería mi primera vez viéndote como produ y que yo llegaría a ser anfi jajaja?</p>
+
+        <p>Pasó el tiempo, yo seguía pasando a tus lives, disfrutaba de conocer más música y recordar otra tanta, mientras tú disfrutabas de tu café irlandés. Cuando, de repente, me hiciste parte de algo tan importante: me hiciste parte de tu team y me permitiste ayudarte a formar los primeros grupos de la Piratiza. Me permitiste ser tu mano derecha a partir de ahí.</p>
+
+        <p>Luego, la historia no fue tan favorable para ti, ya que fue cuando tomaste la decisión de desaparecer por primera vez. Pero algo que me hizo sentir muy especial fue que me mandaste un mensaje para contarme que te alejabas, pero que yo iba a tener la oportunidad de seguir en contacto contigo. En verdad, no sabes cómo fue eso un abrazo para mi alma, y más porque era un momento en el que no la estaba pasando bien por la salud de mis tías.</p>
+
+        <p>Regresaste y eso me entusiasmó demasiado. ¡Y vaya sorpresa y regalo que me diste cuando regresaste! De por sí, el hecho de permitirme ser de las primeras en darme cuenta de eso ya era especial; además, me llevé la sorpresa de que entré a un live de Terre y resulta que estabas hablando de mí (afortunadamente para bien jajaja).</p>
+
+        <p>A partir de ahí, me empezaste a recibir en todos los lives en los que te veía diciendo: «Alexa, mi mejor mod, mi mano derecha». En verdad, no sabes cómo eso me estuvo levantando la moral y el ánimo, porque justo fue cuando fallecieron mis tías y pasé por una de las situaciones más complicadas de mi vida, jeje. El hecho de saber que para alguien significaba algo tan bonito fue algo muy lindo.</p>
+
+        <p>Y justo en esas fechas también fue tu primera y única batalla oficial, en la que estaba tan nerviosa porque no quería que se revelara parte de tu identidad (aunque debo admitir que, un poquito en el fondo, pero no tan en el fondo jajaja, sí quería que perdieras para así poder conocerte jajaja). Pero vaya cosas de la vida: sí perdiste, y gracias a eso le empecé a poner rostro a mi tío Sabri.</p>
+
+        <p>Luego me hiciste un video acerca de la mejor mod. Si tan solo hubieras visto cómo me emocioné, sabrías lo mucho que lo valoré. Y a partir de ahí fue como: «Diablos, ¡cómo me gustaría no ser su sobrina, sino su hija jajaja!». Poco a poco nos fuimos volviendo más cercanos, y para mí eso fue un gran regalo de la vida, hasta que llegó el momento en que me atreví a decirte cuánto me encantaría que me hubieras adoptado como hija y no como sobrina. Pero no pensé que esto llegara a hacerse realidad hasta el momento en que sucedió, y no puedo describir lo feliz que fui jajaja.</p>
+
+        <p>Después sucedió que contigo viví el día en que más me aloque. Ya ves, tú diciendo que ibas de produ invitado y te volviste anfitrión, pero debo admitir que valió cada moneda que ahorré jajaja. Luego te volviste un produ de verdad, aunque me dio risa y me sorprendió que al tercer día ya andabas sin voz jajaja. No pensé que eso fuera a suceder tan pronto; fue tanto que, por primera vez, no te reconocí jajaja.</p>
+
+        <p>Pero gracias a que estuviste de produ durante bastante tiempo, tuve la oportunidad de ir a conocerte en persona. Ese día nunca lo voy a poder olvidar. Fue tan increíble poder darte un abrazo y darme cuenta de que era real todo lo que había pasado. Y la cereza del pastel fue que te arriesgaste a salir a bailar un momento conmigo. No puedo describir lo que sentí en ese momento, tanto que, en verdad, estaba en shock por estar viviendo ese instante y no me lo creí hasta el día siguiente jajaja.</p>
+
+        <p>Y esos han sido algunos de los momentos más significativos que he compartido contigo hasta el momento, pero en verdad espero y deseo que nos falten muchos más.</p>
+
+        <p>Así que sí, en definitiva, podría llegar a decir que eres un angelito que llegó antes de que me imaginara que lo necesitaría y que aún sigue conmigo en los momentos más complicados. Me has guiado, me has enseñado y me has recordado muchas cosas importantes. Es por eso que siempre te agradeceré.</p>
+
+        <p>Y quiero que sepas que, siempre que me sea posible, estaré buscando también cuidarte, apoyarte en todo lo que pueda, acompañarte en lo que me permitas y echarte porras en todo momento. Y la única manera en la que me voy a desaparecer de tu vida es solo si tú me lo pides. Porque llegada a tu vida hay, pero des-llegada no jajaja.</p>
+
+        <p>Te quiero muchísimo, pero muchísimo, papá. Espero que puedas celebrar de una manera muy linda tu cumpleaños. Ojalá puedas celebrar con tus seres queridos y puedas recordar que existimos muchas personas que te queremos. Que la vida te llene de muchas cosas buenas, de mucha sabiduría para afrontar los problemas y de mucho amor, porque te lo mereces.</p>
+
+        <p>Te mando un fuerte abrazo y espero pronto poder dártelo en persona.</p>
+
+        <div class="letter-signature">
+          <div class="sig-farewell">Con mucho cariño,</div>
+          <div class="sig-name">Tu hija, Alexa.</div>
+        </div>
+      </section>
+
+      <!-- Bottom Interactive Actions -->
+      <footer class="action-bar">
+        <button class="btn btn-primary" onclick="launchHearts()">
+          <span>❤️</span> Enviar abrazos y cariño
+        </button>
+        <button class="btn btn-secondary" onclick="window.print()">
+          <span>📄</span> Guardar en PDF / Imprimir
+        </button>
+      </footer>
+
+    </article>
+  </main>
+
+  <script>
+    // Confetti and open letter animation
+    function openLetter() {
+      const flap = document.getElementById('flap');
+      flap.style.transform = 'rotateX(180deg)';
+
+      // Confetti burst
+      confetti({
+        particleCount: 80,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#d4a359', '#a64d2a', '#f5e6d3', '#8b1e1b']
+      });
+
+      setTimeout(() => {
+        const screen = document.getElementById('envelope-screen');
+        const content = document.getElementById('letter-content');
+        
+        screen.style.opacity = '0';
+        screen.style.transform = 'translateY(-20px)';
+        
+        setTimeout(() => {
+          screen.style.display = 'none';
+          content.style.display = 'block';
+          
+          setTimeout(() => {
+            content.style.opacity = '1';
+            content.style.transform = 'translateY(0)';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }, 50);
+        }, 500);
+      }, 700);
+    }
+
+    // Interactive Floating Hearts
+    function launchHearts() {
+      const emojis = ['❤️', '✨', '🏴‍☠️', '🫂', '🍪', '🎈'];
+      for (let i = 0; i < 18; i++) {
+        setTimeout(() => {
+          const heart = document.createElement('div');
+          heart.className = 'floating-heart';
+          heart.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+          heart.style.left = (Math.random() * 85 + 5) + 'vw';
+          heart.style.animationDuration = (Math.random() * 2 + 2.5) + 's';
+          document.body.appendChild(heart);
+          
+          setTimeout(() => heart.remove(), 4000);
+        }, i * 140);
+      }
+    }
+  </script>
+</body>
+</html>
